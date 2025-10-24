@@ -2,10 +2,77 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
-  <title>Ürem Sancaktutan</title>
+  <title>Ürem’in Uzay Sayfası</title>
+  <style>
+    /* Arka plan yıldızlar */
+    body {
+      margin: 0;
+      overflow: hidden;
+      height: 100vh;
+      background: radial-gradient(ellipse at bottom, #000022 0%, #000000 100%);
+      color: white;
+      font-family: Arial, sans-serif;
+    }
+    h1 {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      font-size: 2em;
+    }
+    /* Astronot görseli */
+    #astronaut {
+      position: absolute;
+      width: 100px;
+      top: 50%;
+      left: -100px;
+      transition: left 0.05s linear;
+    }
+    /* Yıldızlar */
+    .star {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: white;
+      border-radius: 50%;
+      animation: twinkle 2s infinite alternate;
+    }
+    @keyframes twinkle {
+      from { opacity: 0.2; }
+      to { opacity: 1; }
+    }
+  </style>
 </head>
 <body>
-  <h1>Merhaba, ben Ürem!</h1>
-  <p>Bu benim GitHub Pages sitem.</p>
+
+<h1>Yakında burada baya şeyler olacak 🚀</h1>
+
+<img id="astronaut" src="https://i.ibb.co/4J1S0y9/astronaut.png" alt="astronot">
+
+<script>
+  // Yıldızları oluştur
+  const starCount = 150;
+  for (let i = 0; i < starCount; i++) {
+    const star = document.createElement('div');
+    star.className = 'star';
+    star.style.top = Math.random() * window.innerHeight + 'px';
+    star.style.left = Math.random() * window.innerWidth + 'px';
+    star.style.width = star.style.height = (Math.random() * 2 + 1) + 'px';
+    document.body.appendChild(star);
+  }
+
+  // Astronotu hareket ettir
+  const astronaut = document.getElementById('astronaut');
+  let pos = -100;
+  function moveAstronaut() {
+    pos += 2; // hız
+    if(pos > window.innerWidth) pos = -100;
+    astronaut.style.left = pos + 'px';
+    requestAnimationFrame(moveAstronaut);
+  }
+  moveAstronaut();
+</script>
+
 </body>
 </html>
+
+
