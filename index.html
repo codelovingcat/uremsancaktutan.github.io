@@ -1,74 +1,94 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <title>Ürem’in Uzay Sayfası</title>
-  <html>
-    Ürem Sancaktutan
-  </html>
-  <style>
-    /* Arka plan yıldızlar */
-    body {
-      margin: 0;
-      overflow: hidden;
-      height: 100vh;
-      background: radial-gradient(ellipse at bottom, #000022 0%, #000000 100%);
-      color: white;
-      font-family: Arial, sans-serif;
-    }
+<meta charset="UTF-8">
+<title>Ürem’in Uzay Sayfası</title>
+<style>
+body {
+  margin: 0;
+  overflow: hidden;
+  height: 100vh;
+  background: radial-gradient(ellipse at bottom, #000022 0%, #000000 100%);
+  color: white;
+  font-family: Arial, sans-serif;
+}
 
-    h1 {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      font-size: 2em;
-    }
+h1 {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  font-size: 2em;
+}
 
-    /* Astronot sabit konumda */
-    #astronaut {
-      position: absolute;
-      width: 150px;
-      bottom: 50px;
-      right: 50px;
-    }
+/* Astronot sabit */
+#astronaut {
+  position: absolute;
+  width: 150px;
+  bottom: 50px;
+  right: 50px;
+}
 
-    /* Yıldızlar */
-    .star {
-      position: absolute;
-      width: 2px;
-      height: 2px;
-      background: white;
-      border-radius: 50%;
-      animation: twinkle 2s infinite alternate;
-    }
+/* Yıldızlar */
+.star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: white;
+  border-radius: 50%;
+  animation: twinkle 2s infinite alternate;
+}
 
-    @keyframes twinkle {
-      from { opacity: 0.2; }
-      to { opacity: 1; }
-    }
-  </style>
+@keyframes twinkle {
+  from { opacity: 0.2; }
+  to { opacity: 1; }
+}
+
+/* CRT ekran titremesi */
+#screen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+</style>
 </head>
 <body>
 
 <h1>Yakında burada baya şeyler olacak 🚀</h1>
+<img id="astronaut" src="https://i.ibb.co/4J1S0y9/astronaut.png" alt="astronot">
 
-<img id="astronaut" src="https://ibb.co/prvBRLzF" alt="astronot">
- <a href="https://imgbb.com/"><img src="https://i.ibb.co/MDZC2GKc/png-transparent-astronaut-illustration-astronaut-drawing-outer-space-illustration-astronaut-blue-whi.png" alt="png-transparent-astronaut-illustration-astronaut-drawing-outer-space-illustration-astronaut-blue-whi" border="0"></a>
+<div id="screen"></div>
+
 <script>
-  // Yıldızları oluştur
-  const starCount = 150;
-  for (let i = 0; i < starCount; i++) {
-    const star = document.createElement('div');
-    star.className = 'star';
-    star.style.top = Math.random() * window.innerHeight + 'px';
-    star.style.left = Math.random() * window.innerWidth + 'px';
-    star.style.width = star.style.height = (Math.random() * 2 + 1) + 'px';
-    document.body.appendChild(star);
-  }
+// Yıldızlar
+const starCount = 150;
+for(let i=0;i<starCount;i++){
+  const star = document.createElement('div');
+  star.className = 'star';
+  star.style.top = Math.random()*window.innerHeight+'px';
+  star.style.left = Math.random()*window.innerWidth+'px';
+  star.style.width = star.style.height = (Math.random()*2+1)+'px';
+  document.body.appendChild(star);
+}
+
+// CRT cızırtı / titreme efekti
+const screen = document.getElementById('screen');
+
+function crtEffect(){
+  // rastgele x ve y kayması
+  const xShift = (Math.random()-0.5)*10; // -5px -> +5px
+  const yShift = (Math.random()-0.5)*10;
+  // rastgele blur
+  const blur = Math.random()*2; 
+  screen.style.transform = `translate(${xShift}px, ${yShift}px)`;
+  screen.style.filter = `blur(${blur}px)`;
+  // tekrar çağır
+  setTimeout(crtEffect, Math.random()*100+50); // 50-150ms arası değişim
+}
+crtEffect();
 </script>
 
 </body>
 </html>
-
-
-
