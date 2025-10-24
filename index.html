@@ -13,20 +13,22 @@
       color: white;
       font-family: Arial, sans-serif;
     }
+
     h1 {
       position: absolute;
       top: 20px;
       left: 20px;
       font-size: 2em;
     }
-    /* Astronot görseli */
+
+    /* Astronot sabit konumda */
     #astronaut {
       position: absolute;
-      width: 100px;
-      top: 50%;
-      left: -100px;
-      transition: left 0.05s linear;
+      width: 150px;
+      bottom: 50px;
+      right: 50px;
     }
+
     /* Yıldızlar */
     .star {
       position: absolute;
@@ -36,6 +38,7 @@
       border-radius: 50%;
       animation: twinkle 2s infinite alternate;
     }
+
     @keyframes twinkle {
       from { opacity: 0.2; }
       to { opacity: 1; }
@@ -59,21 +62,7 @@
     star.style.width = star.style.height = (Math.random() * 2 + 1) + 'px';
     document.body.appendChild(star);
   }
-
-  // Astronotu hareket ettir
-  const astronaut = document.getElementById('astronaut');
-  let pos = -100;
-  function moveAstronaut() {
-    pos += 2; // hız
-    if(pos > window.innerWidth) pos = -100;
-    astronaut.style.left = pos + 'px';
-    requestAnimationFrame(moveAstronaut);
-  }
-  moveAstronaut();
 </script>
 
 </body>
 </html>
-
-
-
