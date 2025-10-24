@@ -1,94 +1,108 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Ürem’in Uzay Sayfası</title>
-<style>
-body {
-  margin: 0;
-  overflow: hidden;
-  height: 100vh;
-  background: radial-gradient(ellipse at bottom, #000022 0%, #000000 100%);
-  color: white;
-  font-family: Arial, sans-serif;
-}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tubes Cursor</title>
+  <style>
+    body, html, #app {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+    }
 
-h1 {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  font-size: 2em;
-}
+    body {
+      touch-action: none;
+      background: #000; /* Siyah arka plan */
+    }
 
-/* Astronot sabit */
-#astronaut {
-  position: absolute;
-  width: 150px;
-  bottom: 50px;
-  right: 50px;
-}
+    #app {
+      height: 100%;
+      font-family: "Montserrat", serif;
+    }
 
-/* Yıldızlar */
-.star {
-  position: absolute;
-  width: 2px;
-  height: 2px;
-  background: white;
-  border-radius: 50%;
-  animation: twinkle 2s infinite alternate;
-}
+    #app a {
+      text-decoration: none;
+      color: #fff;
+    }
 
-@keyframes twinkle {
-  from { opacity: 0.2; }
-  to { opacity: 1; }
-}
+    .hero {
+      position: relative;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
 
-/* CRT ekran titremesi */
-#screen {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-}
-</style>
+    h1, h2, p {
+      margin: 0;
+      padding: 0;
+      color: white;
+      text-shadow: 0 0 20px rgba(0, 0, 0, 1);
+      line-height: 100%;
+      user-select: none;
+    }
+
+    h1 {
+      font-size: 80px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    h2 {
+      font-size: 60px;
+      font-weight: 500;
+      text-transform: uppercase;
+    }
+
+    #canvas {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      overflow: hidden;
+    }
+  </style>
 </head>
 <body>
+  <div id="app">
+    <canvas id="canvas"></canvas>
+    <div class="hero">
+      <h1>Tubes</h1>
+      <h2>Cursor</h2>
+      <a target="_blank" href="https://www.framer.com/marketplace/components/tubes-cursor/">Framer Component</a>
+    </div>
+  </div>
 
-<h1>Yakında burada baya şeyler olacak 🚀</h1>
-<img id="astronaut" src="https://i.ibb.co/4J1S0y9/astronaut.png" alt="astronot">
+  <script type="module">
+    import TubesCursor from "https://cdn.jsdelivr.net/npm/threejs-components@0.0.19/build/cursors/tubes1.min.js"
 
-<div id="screen"></div>
+    const app = TubesCursor(document.getElementById('canvas'), {
+      tubes: {
+        colors: ["#f967fb", "#53bc28", "#6958d5"],
+        lights: {
+          intensity: 200,
+          colors: ["#83f36e", "#fe8a2e", "#ff008a", "#60aed5"]
+        }
+      }
+    })
 
-<script>
-// Yıldızlar
-const starCount = 150;
-for(let i=0;i<starCount;i++){
-  const star = document.createElement('div');
-  star.className = 'star';
-  star.style.top = Math.random()*window.innerHeight+'px';
-  star.style.left = Math.random()*window.innerWidth+'px';
-  star.style.width = star.style.height = (Math.random()*2+1)+'px';
-  document.body.appendChild(star);
-}
+    document.body.addEventListener('click', () => {
+      const colors = randomColors(3)
+      const lightsColors = randomColors(4)
+      console.log(colors, lightsColors)
+      app.tubes.setColors(colors)
+      app.tubes.setLightsColors(lightsColors)
+    })
 
-// CRT cızırtı / titreme efekti
-const screen = document.getElementById('screen');
-
-function crtEffect(){
-  // rastgele x ve y kayması
-  const xShift = (Math.random()-0.5)*10; // -5px -> +5px
-  const yShift = (Math.random()-0.5)*10;
-  // rastgele blur
-  const blur = Math.random()*2; 
-  screen.style.transform = `translate(${xShift}px, ${yShift}px)`;
-  screen.style.filter = `blur(${blur}px)`;
-  // tekrar çağır
-  setTimeout(crtEffect, Math.random()*100+50); // 50-150ms arası değişim
-}
-crtEffect();
-</script>
-
+    function randomColors (count) {
+      return new Array(count)
+        .fill(0)
+        .map(() => "#" + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0'))
+    }
+  </script>
 </body>
 </html>
