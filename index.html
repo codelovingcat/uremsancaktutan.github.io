@@ -1,111 +1,258 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ürem Sancaktutan</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Astronaut Hero — Tek Sayfa</title>
   <style>
-    body, html, #app {
-      margin: 0;
-      width: 100%;
-      height: 100%;
-    }
-
+    /* Reset & temel ayarlar */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
     body {
-      touch-action: none;
-      background: #000; /* Siyah arka plan */
-    }
-
-    #app {
-      height: 100%;
-      font-family: "Montserrat", serif;
-    }
-
-    #app a {
-      text-decoration: none;
-      color: #fff;
-    }
-
-    .hero {
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      height: 100vh;
+      width: 100%;
+      overflow: hidden;
       position: relative;
-      height: 100%;
+      background-color: #935d8c;
+      background-image: linear-gradient(-45deg, rgba(230,59,93,0.5) 40%, rgba(140,0,255,0.5) 80%);
+      background-size: cover;
+      background-position: center;
+      transition: background-color .25s ease, transform .25s ease;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 10px;
+      padding: 20px;
     }
 
-    h1, h2, p {
-      margin: 0;
-      padding: 0;
-      color: white;
-      text-shadow: 0 0 20px rgba(0, 0, 0, 1);
-      line-height: 100%;
-      user-select: none;
+    /* Konteyner: içerikleri ortala ve responsive davran */
+    .stage {
+      width: min(1100px, 96vw);
+      height: min(720px, 86vh);
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      gap: 24px;
+      align-items: center;
+      justify-items: center;
     }
 
-    h1 {
-      font-size: 80px;
-      font-weight: 700;
-      text-transform: uppercase;
+    /* Mobil durumda tek sütuna dönüş */
+    @media (max-width: 900px) {
+      .stage { grid-template-columns: 1fr; grid-auto-rows: auto; gap: 18px; }
     }
 
-    h2 {
-      font-size: 60px;
-      font-weight: 500;
-      text-transform: uppercase;
-    }
-
-    #canvas {
-      position: fixed;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      left: 0;
+    /* Sol panel: büyük arka plan / efekt için */
+    .hero {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      border-radius: 20px;
       overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(6px) saturate(1.05);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+      background:
+        radial-gradient(600px 300px at 10% 30%, rgba(255,255,255,0.03), transparent 10%),
+        linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.03));
+    }
+
+    /* Sağ panel: bilgi / butonlar (isteğe bağlı) */
+    .panel {
+      width: 100%;
+      height: 100%;
+      padding: 32px;
+      display:flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: flex-start;
+      justify-content: center;
+      color: #fff;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.45);
+    }
+    .panel h1 { font-size: clamp(20px, 3.6vw, 28px); margin-bottom: 6px; }
+    .panel p { font-size: 14px; opacity: 0.95; line-height: 1.4; }
+
+    /* SVG kapsayıcı: boyutlandırma ve animasyon */
+    .astro-wrap {
+      width: 100%;
+      max-width: 900px;
+      height: 100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      pointer-events: none; /* SVG interaktif değilse fare olaylarını engelle */
+    }
+
+    /* object veya img için boyut ve geçişler */
+    .astro {
+      width: min(85%, 720px);
+      height: auto;
+      transform-origin: center;
+      transition: transform .35s ease, filter .35s ease;
+      filter: drop-shadow(0 20px 30px rgba(0,0,0,0.45));
+      will-change: transform;
+      display:block;
+    }
+
+    /* hafif yüzen animasyon */
+    @keyframes floaty {
+      0% { transform: translateY(0) rotate(-1deg); }
+      50% { transform: translateY(-18px) rotate(1deg); }
+      100% { transform: translateY(0) rotate(-1deg); }
+    }
+    .float { animation: floaty 6s ease-in-out infinite; }
+
+    /* yüklenme durumu için hafif bir efek */
+    .loading .astro { opacity: 0; transform: scale(.98); }
+    .loaded .astro { opacity: 1; transform: scale(1); transition: opacity .4s ease, transform .6s cubic-bezier(.2,.9,.3,1); }
+
+    /* hover (masaüstünde) — kullanıcı etkileşimi olunca hafif büyüme */
+    @media (hover: hover) and (pointer: fine) {
+      .astro-wrap:hover .astro { transform: translateY(-6px) scale(1.02); }
+    }
+
+    /* Basit buton stili (isteğe bağlı) */
+    .btn {
+      margin-top: 12px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+      border: 1px solid rgba(255,255,255,0.08);
+      color: #fff;
+      cursor: pointer;
+      user-select: none;
+      transition: transform .18s ease, box-shadow .18s ease;
+    }
+    .btn:active { transform: translateY(1px) scale(.997); box-shadow: none; }
+
+    /* placeholder fallback styling */
+    .fallback {
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color: rgba(255,255,255,0.9);
+      font-size: 14px;
+      padding: 18px;
+      text-align:center;
     }
   </style>
 </head>
-<body>
-  <div id="app">
-    <canvas id="canvas"></canvas>
-    <div class="hero">
-      <h1>Yakında burada</h1>
-      <h2>baya bir şeyler olacak!</h2>
-      <a target="_blank" href="https://www.framer.com/marketplace/components/tubes-cursor/">Ürem Sancaktutan</a>
-    </div>
-  </div>
+<body class="loading">
+  <main class="stage" role="main">
+    <!-- Sol: Astronaut SVG -->
+    <section class="hero" aria-label="Astronaut hero illustration">
+      <div class="astro-wrap" id="astroWrap" aria-hidden="false">
+        <!-- object kullanımı: SVG remote yükleme. 
+             Eğer sunucu SVG'yi engellerse fallback için <img> veya .fallback gösterilecek. -->
+        <object id="astroObject" class="astro float" type="image/svg+xml"
+                data="https://cdn.svgator.com/assets/main-page/fold1/astronaut-hero.svg"
+                aria-label="Astronaut illustration as SVG">
+          <!-- object yüklenmezse bu fallback gösterilir -->
+          <img id="astroImg" class="astro float" alt="Astronaut illustration (fallback image)"
+               src="https://cdn.svgator.com/assets/main-page/fold1/astronaut-hero.svg" />
+          <div class="fallback">İllüstrasyon yüklenemiyor — lütfen internet bağlantınızı kontrol edin.</div>
+        </object>
+      </div>
+    </section>
 
-  <script type="module">
-    import TubesCursor from "https://cdn.jsdelivr.net/npm/threejs-components@0.0.19/build/cursors/tubes1.min.js"
+    <!-- Sağ: Basit açıklama ve kontrol -->
+    <aside class="panel" aria-label="Kontrol paneli">
+      <h1>Astronaut Hero</h1>
+      <p>Bu sayfa tek dosyada birleşmiş örnektir. SVG uzak bir kaynaktan yükleniyor; mobilde responsive davranır. Hover ile hafif etkileşim sağlar.</p>
+      <button id="toggleFloat" class="btn" type="button">Animasyonu Duraklat / Devam Ettir</button>
+      <button id="reloadSvg" class="btn" type="button">SVG'yi Yeniden Yükle</button>
+    </aside>
+  </main>
 
-    const app = TubesCursor(document.getElementById('canvas'), {
-      tubes: {
-        colors: ["#f967fb", "#53bc28", "#6958d5"],
-        lights: {
-          intensity: 200,
-          colors: ["#83f36e", "#fe8a2e", "#ff008a", "#60aed5"]
-        }
+  <script>
+    /*
+       __  __ ______ _______ _________     __
+      ____ |  \/  |  ____|__   __|__   __\ \   / /
+     / __ \| \  / | |__     | |     | |   \ \_/ /
+    / / _` | |\/| |  __|    | |     | |    \   /
+   | | (_| | |  | | |____   | |     | |     | |
+    \ \__,_|_|  |_|______|  |_|     |_|     |_|
+     \____/ Mathias Lorenz, 2023 | Made with ❤️
+    */
+
+    (function () {
+      const body = document.body;
+      const astroObject = document.getElementById('astroObject');
+      const astroImg = document.getElementById('astroImg');
+      const astroWrap = document.getElementById('astroWrap');
+      const toggleBtn = document.getElementById('toggleFloat');
+      const reloadBtn = document.getElementById('reloadSvg');
+
+      // Yardımcı: SVG yüklendiğinde "loaded" sınıfı ver
+      function markLoaded() {
+        body.classList.remove('loading');
+        body.classList.add('loaded');
       }
-    })
 
-    document.body.addEventListener('click', () => {
-      const colors = randomColors(3)
-      const lightsColors = randomColors(4)
-      console.log(colors, lightsColors)
-      app.tubes.setColors(colors)
-      app.tubes.setLightsColors(lightsColors)
-    })
+      // object element'in içeriği yüklendiğinde 'load' tetiklenir
+      astroObject.addEventListener('load', () => {
+        // object içindeki svg'ye erişim (cihaz/aynı-origin değilse sınırlı olabilir)
+        markLoaded();
+        // pointer-events'i kapatmıştık; bu sayede fare olayları panele geçer.
+        // Eğer SVG ile etkileşim isterseniz pointer-events'i enable edin.
+      });
 
-    function randomColors (count) {
-      return new Array(count)
-        .fill(0)
-        .map(() => "#" + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0'))
-    }
+      // Eğer object load tetiklenmezse img fallback ile dene
+      // (bazı sunucular object ile cross-origin gösterimi engelleyebilir)
+      astroImg.addEventListener('load', () => {
+        // Eğer object yüklenmez ama <img> yüklenirse loaded yap
+        // (object içindeki img de geçerli olabilir)
+        markLoaded();
+      });
+
+      // Zaman aşımı durumunda fallback göster
+      setTimeout(() => {
+        if (!body.classList.contains('loaded')) {
+          console.warn('SVG yüklenmesi zaman aşımına uğradı veya engellendi.');
+          body.classList.remove('loading');
+          body.classList.add('loaded'); // yine de yükledi say, fallback görünür
+        }
+      }, 4500); // 4.5s timeout — yüklenmezse kullanıcıya göster
+
+      // Animasyonu duraklat / başlat
+      let isFloating = true;
+      toggleBtn.addEventListener('click', () => {
+        isFloating = !isFloating;
+        const elems = document.querySelectorAll('.astro');
+        elems.forEach(el => {
+          if (isFloating) el.classList.add('float'); else el.classList.remove('float');
+        });
+        toggleBtn.textContent = isFloating ? 'Animasyonu Duraklat / Devam Ettir' : 'Animasyonu Duraklat / Devam Ettir';
+      });
+
+      // Basit reload: object elemanını yeniden yükler
+      reloadBtn.addEventListener('click', () => {
+        try {
+          // object data attribute'unu temizleyip tekrar atarak reload yap
+          const url = astroObject.getAttribute('data');
+          astroObject.setAttribute('data', '');
+          setTimeout(() => astroObject.setAttribute('data', url), 50);
+          // aynı zamanda img src'yi yeniden atıyoruz
+          const imgUrl = astroImg.getAttribute('src');
+          astroImg.setAttribute('src', '');
+          setTimeout(() => astroImg.setAttribute('src', imgUrl), 60);
+          // beklemede kullanıcıya bilgi verilebilir - burada console ile bildiriyoruz
+          console.log('SVG yeniden yükleniyor...');
+        } catch (e) {
+          console.error('Yeniden yükleme başarısız', e);
+        }
+      });
+
+      // Küçük dokunuş: klavye ile P tuşuna basınca animasyonu toggle et
+      window.addEventListener('keydown', (ev) => {
+        if (ev.key.toLowerCase() === 'p') toggleBtn.click();
+      });
+
+      // Eğer object'in içeriği cross-origin olarak erişilemezse, <img> otomatik olarak görünür.
+      // Bu sayfa minimal, ancak istersen daha karmaşık kontroller (svg replace, inline fetch vb.) ekleyebilirim.
+    })();
   </script>
 </body>
 </html>
-
-
-
